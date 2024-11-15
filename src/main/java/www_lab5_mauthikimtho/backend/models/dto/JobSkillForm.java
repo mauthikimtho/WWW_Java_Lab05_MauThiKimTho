@@ -6,7 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class JobSkillForm {
+    private Long jobId;
     private Long skillId;
-    private Byte skillLevel;
+    private int skillLevel;
     private String moreInfos;
 }
