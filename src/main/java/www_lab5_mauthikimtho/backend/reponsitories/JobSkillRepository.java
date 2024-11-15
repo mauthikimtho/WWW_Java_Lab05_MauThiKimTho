@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import www_lab5_mauthikimtho.backend.models.entities.JobSkill;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface JobSkillRepository extends JpaRepository<JobSkill, Long> {
@@ -25,4 +26,8 @@ public interface JobSkillRepository extends JpaRepository<JobSkill, Long> {
                        @Param("skillId") Long skillId,
                        @Param("skillLevel") int skillLevel,
                        @Param("moreInfos") String moreInfos);
+
+    // Truy vấn tìm kiếm JobSkill theo jobId và skillId
+    @Query("SELECT js FROM JobSkill js WHERE js.id = :jobId AND js.id = :skillId")
+    Optional<JobSkill> findById(@Param("jobId") Long jobId, @Param("skillId") Long skillId);
 }
