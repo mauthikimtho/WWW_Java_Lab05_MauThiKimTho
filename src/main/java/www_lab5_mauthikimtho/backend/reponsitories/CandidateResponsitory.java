@@ -27,26 +27,40 @@ public interface CandidateResponsitory extends JpaRepository<Candidate, Long> {
                                 @Param("minSkillLevel") int minSkillLevel);
 
     // 3. Thống kê số lượng ứng viên theo tháng/quý/năm
-    @Query(value = "SELECT YEAR(c.created_date) AS year, MONTH(c.created_date) AS month, COUNT(*) AS count " +
-            "FROM candidate c " +
-            "GROUP BY YEAR(c.created_date), MONTH(c.created_date) " +
-            "ORDER BY year DESC, month DESC",
-            nativeQuery = true)
-    List<Object[]> countCandidatesByMonth();
+//    @Query(value = "SELECT YEAR(c.created_date) AS year, MONTH(c.created_date) AS month, COUNT(*) AS count " +
+//            "FROM candidate c " +
+//            "GROUP BY YEAR(c.created_date), MONTH(c.created_date) " +
+//            "ORDER BY year DESC, month DESC",
+//            nativeQuery = true)
+//    List<Object[]> countCandidatesByMonth();
+//
+//    @Query(value = "SELECT YEAR(c.created_date) AS year, QUARTER(c.created_date) AS quarter, COUNT(*) AS count " +
+//            "FROM candidate c " +
+//            "GROUP BY YEAR(c.created_date), QUARTER(c.created_date) " +
+//            "ORDER BY year DESC, quarter DESC",
+//            nativeQuery = true)
+//    List<Object[]> countCandidatesByQuarter();
+//
+//    @Query(value = "SELECT YEAR(c.created_date) AS year, COUNT(*) AS count " +
+//            "FROM candidate c " +
+//            "GROUP BY YEAR(c.created_date) " +
+//            "ORDER BY year DESC",
+//            nativeQuery = true)
+//    List<Object[]> countCandidatesByYear();
+    @Query(value = """
+        SELECT 
+            CASE 
+                WHEN :period = 'month' THEN CONCAT(YEAR(c.created_date), '-', MONTH(c.created_date))
+                WHEN :period = 'quarter' THEN CONCAT(YEAR(c.created_date), '-Q', QUARTER(c.created_date))
+                WHEN :period = 'year' THEN CONCAT(YEAR(c.created_date), '')
+            END AS time_period,
+            COUNT(*) AS count
+        FROM candidate c
+        GROUP BY time_period
+        ORDER BY time_period DESC
+    """, nativeQuery = true)
+    List<Object[]> getCandidatesStatisticsByTime(@Param("period") String period);
 
-    @Query(value = "SELECT YEAR(c.created_date) AS year, QUARTER(c.created_date) AS quarter, COUNT(*) AS count " +
-            "FROM candidate c " +
-            "GROUP BY YEAR(c.created_date), QUARTER(c.created_date) " +
-            "ORDER BY year DESC, quarter DESC",
-            nativeQuery = true)
-    List<Object[]> countCandidatesByQuarter();
-
-    @Query(value = "SELECT YEAR(c.created_date) AS year, COUNT(*) AS count " +
-            "FROM candidate c " +
-            "GROUP BY YEAR(c.created_date) " +
-            "ORDER BY year DESC",
-            nativeQuery = true)
-    List<Object[]> countCandidatesByYear();
 
     // 4. Thống kê ứng viên theo kỹ năng
     @Query(value = "SELECT s.skill_name AS skillName, COUNT(c.id) AS candidateCount " +
@@ -83,4 +97,11 @@ public interface CandidateResponsitory extends JpaRepository<Candidate, Long> {
             "WHERE js.job_id = :jobId AND cs.skill_level >= js.skill_level",
             nativeQuery = true)
     List<Candidate> findSuitableCandidatesForJob(@Param("jobId") Long jobId);
+
+    // 9. Tìm ứng viên theo kỹ năng
+    @Query(value = "SELECT c.* FROM candidate c " +
+            "JOIN candidate_skill cs ON c.id = cs.can_id " +
+            "WHERE cs.skill_id = :skillId",
+            nativeQuery = true)
+    List<Candidate> findCandidatesBySkill(@Param("skillId") Long skillId);
 }

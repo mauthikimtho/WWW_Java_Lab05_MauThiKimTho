@@ -66,16 +66,19 @@ public class CandidateServiceImpl implements CandidateService {
 
     @Override
     public List<Object[]> getCandidatesStatisticsByTime(String period) {
-        return candidateRepository.getCandidateStatisticsByTime(period);
+        if (!List.of("month", "quarter", "year").contains(period.toLowerCase())) {
+            throw new IllegalArgumentException("Invalid period: " + period);
+        }
+        return candidateRepository.getCandidatesStatisticsByTime(period);
     }
 
     @Override
     public List<Object[]> getCandidatesStatisticsBySkill() {
-        return candidateRepository.getCandidateStatisticsBySkill();
+        return candidateRepository.countCandidatesBySkill();
     }
 
     @Override
     public List<Object[]> getCandidatesStatisticsByLocation() {
-        return candidateRepository.getCandidateStatisticsByLocation();
+        return candidateRepository.countCandidatesByLocation();
     }
 }
