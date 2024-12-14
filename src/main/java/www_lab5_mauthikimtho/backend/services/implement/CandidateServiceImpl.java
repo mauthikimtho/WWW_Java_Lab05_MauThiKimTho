@@ -1,6 +1,8 @@
 package www_lab5_mauthikimtho.backend.services.implement;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import www_lab5_mauthikimtho.backend.models.entities.Candidate;
@@ -80,5 +82,10 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public List<Object[]> getCandidatesStatisticsByLocation() {
         return candidateRepository.countCandidatesByLocation();
+    }
+
+    @Override
+    public Page<Candidate> getAllCandidates(Pageable pageable) {
+        return candidateRepository.findAll(pageable);
     }
 }
