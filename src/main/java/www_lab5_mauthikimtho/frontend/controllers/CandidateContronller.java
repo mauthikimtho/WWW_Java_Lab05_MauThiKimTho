@@ -9,9 +9,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import www_lab5_mauthikimtho.backend.models.dto.CandidateForm;
+import www_lab5_mauthikimtho.backend.models.entities.Address;
 import www_lab5_mauthikimtho.backend.models.entities.Candidate;
 import www_lab5_mauthikimtho.backend.reponsitories.CandidateSkillResponsitory;
 import www_lab5_mauthikimtho.backend.reponsitories.SkillReponsitory;
@@ -48,7 +49,7 @@ public class CandidateContronller {
         model.addAttribute("candidatePage", candidatePage); // Truyền dữ liệu vào model
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
-        return "candidates/candidates-paging"; // Trả về tên view
+        return "candidate-paging"; // Trả về tên view
     }
 
 
@@ -56,10 +57,48 @@ public class CandidateContronller {
     @GetMapping("/list")
     public String listCandidates(Model model) {
         List<Candidate> candidates = candidateService.getAllCandidates();
-        model.addAttribute("candidates", candidates);
-        return "candidates/candidates";
+        model.addAttribute("candidate", candidates);
+        return "candidate";
     }
 
+    // Hiển thị form thêm ứng viên mới
+    @GetMapping("/add")
+    public String showAddCandidateForm(Model model) {
+        model.addAttribute("candidateForm", new CandidateForm());
+        return "candidate/add-candidate";
+    }
 
+    @PostMapping("/add")
+    public String addCandidate(@ModelAttribute("candidateForm") CandidateForm candidateForm, RedirectAttributes redirectAttributes) {
+        try{
+            // Tạo Address mới
+            Address address = new Address();
+            address.setStreet(candidateForm.getStreet());
+            address.setCity(candidateForm.getCity());
+            address.setCountry(candidateForm.getCountry().getCode());
+            address.setNumber(candidateForm.getNumber());
+            address.setZipcode(candidateForm.getZipcode());
+
+            addressService.createAddress(address);
+
+            // Tạo Candidate mới
+            Candidate candidate = new Candidate();
+            candidate.setEmail(candidateForm.getEmail());
+            candidate.setFullName(candidateForm.getFullName());
+            candidate.setPhone(candidateForm.getPhone());
+            candidate.setDob(candidateForm.getDob());
+            candidate.setAddress(address);
+
+            candidateService.createCandidate(candidate);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm ứng viên thành công!");
+            return "redirect:/candidate/list";
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        redirectAttributes.addFlashAttribute("errorMessage", "Thêm ứng viên thất bại!");
+        return "redirect:/candidate/add";
+    }
 
 }

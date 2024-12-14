@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh Sách Ứng Viên - Phân Trang</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        .pagination {
+            flex-wrap: wrap;
+        }
+
+        .pagination .page-item {
+            margin: 2px;
+        }
+
+        .pagination-container {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .page-link {
+            border-radius: 50%;
+        }
+
+        .action-buttons a {
+            margin-right: 5px;
+        }
+
+        .alert-message {
+            margin-bottom: 20px;
+        }
+
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h1 class="mb-4 text-center text-primary">Danh Sách Ứng Viên</h1>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show alert-message" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show alert-message" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a th:href="@{/candidates/add}" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Thêm Ứng Viên Mới
+        </a>
+
+        <a href="http://localhost:8080" class="btn btn-secondary">
+            <i class="bi bi-house-door-fill"></i> Quay về Trang Chủ
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead class="table-primary">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Tên Đầy Đủ</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Điện Thoại</th>
+                        <th scope="col">Ngày Sinh</th>
+                        <th scope="col">Địa Chỉ</th>
+                        <th scope="col">Hành Động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="candidate : ${candidatePage.content}">
+                        <td th:text="${candidate.id}"></td>
+                        <td th:text="${candidate.fullName}"></td>
+                        <td th:text="${candidate.email}"></td>
+                        <td th:text="${candidate.phone}"></td>
+                        <td th:text="${candidate.dob}"></td>
+                        <td th:text="${candidate.address.street} + ', ' + ${candidate.address.city} + ', ' + ${candidate.address.country}"></td>
+                        <td class="action-buttons">
+                            <a th:href="@{/candidates/edit/{id}(id=${candidate.id})}" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil-square"></i> Sửa
+                            </a>
+                            <a th:href="@{/candidates/delete/{id}(id=${candidate.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                <i class="bi bi-trash"></i> Xóa
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Phân trang -->
+            <nav aria-label="Page navigation">
+                <div class="pagination-container">
+                    <ul class="pagination justify-content-center">
+                        <!-- Nút "Trước" -->
+                        <li class="page-item" th:classappend="${candidatePage.first} ? 'disabled'">
+                            <a class="page-link" th:href="@{/candidates/list-paged(page=${candidatePage.number - 1}, size=${candidatePage.size})}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+
+                        <!-- Các số trang -->
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, candidatePage.totalPages - 1)}"
+                            th:classappend="${i == candidatePage.number} ? 'active' : ''">
+                            <a class="page-link" th:href="@{/candidates/list-paged(page=${i}, size=${candidatePage.size})}" th:text="${i + 1}"></a>
+                        </li>
+
+                        <!-- Nút "Sau" -->
+                        <li class="page-item" th:classappend="${candidatePage.last} ? 'disabled'">
+                            <a class="page-link" th:href="@{/candidates/list-paged(page=${candidatePage.number + 1}, size=${candidatePage.size})}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
