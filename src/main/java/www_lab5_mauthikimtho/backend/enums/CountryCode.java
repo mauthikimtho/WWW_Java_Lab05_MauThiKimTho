@@ -1,6 +1,9 @@
 package www_lab5_mauthikimtho.backend.enums;
 
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 public enum CountryCode {
     VIETNAM((short) 84, "Việt Nam"),
     USA((short) 1, "Hoa Kỳ"),
@@ -12,6 +15,7 @@ public enum CountryCode {
 
     private final short code;
     private final String displayName;
+
 
     CountryCode(short code, String displayName) {
         this.code = code;

@@ -17,7 +17,7 @@
     </div>
 
     <!-- Form Thêm Ứng Viên -->
-    <form th:action="@{/candidate/add}" th:object="${candidateForm}" method="post">
+    <form th:action="@{/candidates/add}" th:object="${candidateForm}" method="post">
 
         <!-- Phần thông tin ứng viên -->
         <fieldset class="border p-4 rounded mb-4">
@@ -62,9 +62,10 @@
                 <label for="country" class="form-label">Quốc Gia</label>
                 <select id="country" class="form-select" th:field="*{country}" required>
                     <option value="" disabled selected>-- Chọn Quốc Gia --</option>
-                    <option th:each="code : ${T(vn.edu.iuh.fit.backend.enums.CountryCode).values()}"
-                            th:value="${code}" th:text="${code.displayName}"></option>
+                    <option th:each="code : ${T(www_lab5_mauthikimtho.backend.enums.CountryCode).values()}"
+                            th:value="${code.code}" th:text="${code.displayName}"></option>
                 </select>
+
             </div>
 
             <div class="mb-3">
@@ -81,7 +82,7 @@
         <!-- Nút hành động -->
         <div class="d-flex justify-content-between">
             <button type="submit" class="btn btn-primary">Thêm Ứng Viên</button>
-            <a class="btn btn-secondary" th:href="@{/candidate/list}">Hủy</a>
+            <a class="btn btn-secondary" th:href="@{/candidates/list}">Hủy</a>
         </div>
     </form>
 </div>

@@ -10,13 +10,11 @@ import java.time.LocalDate;
 @Setter
 public class CandidateForm {
     private Long id;
-
     private String email;
     private String fullName;
     private String phone;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
-
     private String street;
     private String city;
     private CountryCode country;

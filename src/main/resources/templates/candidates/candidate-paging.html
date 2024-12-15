@@ -89,7 +89,7 @@
                         <td th:text="${candidate.dob}"></td>
                         <td th:text="${candidate.address.street} + ', ' + ${candidate.address.city} + ', ' + ${candidate.address.country}"></td>
                         <td class="action-buttons">
-                            <a th:href="@{/candidates/edit/{id}(id=${candidate.id})}" class="btn btn-warning btn-sm">
+                            <a th:href="@{/candidates/update/{id}(id=${candidate.id})}" class="btn btn-warning btn-sm">
                                 <i class="bi bi-pencil-square"></i> Sửa
                             </a>
                             <a th:href="@{/candidates/delete/{id}(id=${candidate.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">

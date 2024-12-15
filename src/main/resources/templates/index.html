@@ -7,59 +7,80 @@
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            background-color: #f5f5f5;
+            background-color: #f4f6f9;
         }
+
         .navbar {
             display: flex;
             align-items: center;
-            background-color: #e0e0e0;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             margin-top: 20px;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
         }
+
         .profile {
             width: 50px;
             height: 50px;
-            background-color: #d9d9d9;
+            background-color: #ddd;
             border-radius: 50%;
-            margin-right: 10px;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
+
         .profile img {
             width: 40px;
             height: 40px;
+            object-fit: cover;
             border-radius: 50%;
         }
+
+        .profile:hover {
+            background-color: #ddd;
+        }
+
         .menu-item {
             display: flex;
             align-items: center;
-            justify-content: center;
             background-color: #5e4033;
             color: white;
-            padding: 10px 20px;
-            margin-right: 10px;
-            border: none;
-            border-radius: 5px;
+            padding: 12px 20px;
+            border-radius: 8px;
             text-align: center;
             cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 15px;
         }
+
         .menu-item img {
             width: 20px;
             height: 20px;
             margin-right: 10px;
         }
+
         .menu-item:hover {
             background-color: #8b5d4d;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -67,35 +88,129 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.4);
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
+
         .modal-content {
-            background-color: white;
-            padding: 20px;
+            background-color: #fff;
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
             text-align: center;
-            width: 300px;
+            position: relative;
         }
+
         .modal-content h2 {
             margin-top: 0;
-        }
-        .close {
             font-size: 24px;
-            color: #000;
-            float: right;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .close {
+            font-size: 28px;
+            color: #333;
+            position: absolute;
+            top: 15px;
+            right: 20px;
             cursor: pointer;
         }
+
         .close:hover {
-            color: red;
+            color: #f44336;
         }
+
+        .profile-options button {
+            width: 100%;
+            background-color: #5e4033;
+            color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .profile-options button:hover {
+            background-color: #8b5d4d;
+        }
+
+        .form-control {
+            font-size: 16px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: #5e4033;
+            color: white;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #8b5d4d;
+        }
+
+        .text-muted {
+            font-size: 14px;
+            color: #777;
+        }
+
+        .text-primary {
+            color: #0056b3;
+        }
+
+        .text-primary:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+            }
+
+            .menu-item {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .profile {
+                margin-bottom: 10px;
+            }
+
+            .modal-content {
+                width: 80%;
+                padding: 25px;
+            }
+        }
+
     </style>
 </head>
 <body>
 <div class="navbar">
-    <div class="profile">
+    <div class="profile" onclick="toggleProfileOptions()">
         <img src="https://cdn-thumbs.imagevenue.com/02/39/a0/ME19FYC6_t.png" alt="Profile" />
     </div>
     <button class="menu-item" onclick="toggleModal()">
@@ -124,7 +239,7 @@
     </button>
 </div>
 
-<!-- Modal -->
+<!-- Modal for Candidates -->
 <div id="candidateModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="toggleModal()">&times;</span>
@@ -138,19 +253,129 @@
     </div>
 </div>
 
+<!-- Profile Options Modal -->
+<div id="profileModal" class="modal">
+    <div class="modal-content profile-options">
+        <span class="close" onclick="toggleProfileOptions()">&times;</span>
+        <h2>Chọn hành động</h2>
+        <button onclick="showLoginForm()">Đăng nhập</button>
+        <button onclick="window.location.href='profile'">Xem hồ sơ</button>
+    </div>
+</div>
+
+<!-- Login Form Modal -->
+<div id="loginFormModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="toggleLoginForm()">&times;</span>
+        <h2 class="text-center mb-4">Đăng nhập</h2>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="mb-3">
+                <label for="loginEmail" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="loginEmail" required placeholder="Nhập email">
+            </div>
+            <div class="mb-4">
+                <label for="loginPassword" class="form-label">Mật khẩu:</label>
+                <input type="password" class="form-control" id="loginPassword" required placeholder="Nhập mật khẩu">
+            </div>
+            <button type="submit" class="btn-primary py-3">Đăng nhập</button>
+            <div class="text-center mt-3">
+                <a href="#" class="text-muted" onclick="showForgotPasswordForm()">Quên mật khẩu?</a>
+            </div>
+        </form>
+        <div class="text-center mt-4">
+            <p class="text-muted">Chưa có tài khoản? <a href="#" onclick="showRegisterForm()" class="text-primary">Đăng ký ngay</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- Register Form Modal -->
+<div id="registerFormModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="toggleRegisterForm()">&times;</span>
+        <h2 class="text-center mb-4">Đăng ký</h2>
+        <form id="registerForm" onsubmit="handleRegister(event)">
+            <div class="mb-3">
+                <label for="registerEmail" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="registerEmail" required placeholder="Nhập email">
+            </div>
+            <div class="mb-4">
+                <label for="registerPassword" class="form-label">Mật khẩu:</label>
+                <input type="password" class="form-control" id="registerPassword" required placeholder="Nhập mật khẩu">
+            </div>
+            <div class="mb-4">
+                <label for="registerConfirmPassword" class="form-label">Xác nhận mật khẩu:</label>
+                <input type="password" class="form-control" id="registerConfirmPassword" required placeholder="Xác nhận mật khẩu">
+            </div>
+            <button type="submit" class="btn-primary py-3">Đăng ký</button>
+        </form>
+        <div class="text-center mt-4">
+            <p class="text-muted">Đã có tài khoản? <a href="#" onclick="showLoginForm()" class="text-primary">Đăng nhập ngay</a></p>
+        </div>
+    </div>
+</div>
+
 <script>
-    function toggleModal() {
-        const modal = document.getElementById('candidateModal');
-        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    function toggleProfileOptions() {
+        const profileModal = document.getElementById('profileModal');
+        profileModal.style.display = profileModal.style.display === 'flex' ? 'none' : 'flex';
     }
 
-    // Đóng modal khi nhấn ra ngoài
-    window.onclick = function(event) {
-        const modal = document.getElementById('candidateModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
-        }
+    function showLoginForm() {
+        const profileModal = document.getElementById('profileModal');
+        const loginFormModal = document.getElementById('loginFormModal');
+        profileModal.style.display = 'none';
+        loginFormModal.style.display = 'flex';
     }
+
+    function showRegisterForm() {
+        const loginFormModal = document.getElementById('loginFormModal');
+        const registerFormModal = document.getElementById('registerFormModal');
+        loginFormModal.style.display = 'none';
+        registerFormModal.style.display = 'flex';
+    }
+
+    function handleLogin(event) {
+        event.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        // Kiểm tra đăng nhập thành công
+        alert('Đăng nhập thành công!');
+        // Đóng form đăng nhập và mở modal Profile
+        document.getElementById('loginFormModal').style.display = 'none';
+        document.getElementById('profileModal').style.display = 'flex';
+    }
+
+    function handleRegister(event) {
+        event.preventDefault();
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+        if (password !== confirmPassword) {
+            alert('Mật khẩu và xác nhận mật khẩu không khớp!');
+            return;
+        }
+
+        // Lưu người dùng vào localStorage
+        localStorage.setItem('user', JSON.stringify({ email, password }));
+        alert('Đăng ký thành công!');
+        // Đóng form đăng ký và mở modal Profile
+        document.getElementById('registerFormModal').style.display = 'none';
+        document.getElementById('profileModal').style.display = 'flex';
+    }
+
+    // Đóng các modal khi click ra ngoài
+    window.addEventListener('click', function(event) {
+        if (event.target === document.getElementById('profileModal')) {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+        if (event.target === document.getElementById('loginFormModal')) {
+            document.getElementById('loginFormModal').style.display = 'none';
+        }
+        if (event.target === document.getElementById('registerFormModal')) {
+            document.getElementById('registerFormModal').style.display = 'none';
+        }
+    });
 </script>
 </body>
 </html>

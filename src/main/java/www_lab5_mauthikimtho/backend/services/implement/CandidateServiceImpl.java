@@ -6,7 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import www_lab5_mauthikimtho.backend.models.entities.Candidate;
+import www_lab5_mauthikimtho.backend.models.entities.CandidateSkill;
 import www_lab5_mauthikimtho.backend.reponsitories.CandidateResponsitory;
+import www_lab5_mauthikimtho.backend.reponsitories.CandidateSkillResponsitory;
 import www_lab5_mauthikimtho.backend.services.CandidateService;
 
 import java.util.List;
@@ -15,10 +17,12 @@ import java.util.Optional;
 @Service
 public class CandidateServiceImpl implements CandidateService {
     private final CandidateResponsitory candidateRepository;
+    private final CandidateSkillResponsitory candidateSkillResponsitory;
 
     @Autowired
-    public CandidateServiceImpl(CandidateResponsitory candidateRepository) {
+    public CandidateServiceImpl(CandidateResponsitory candidateRepository, CandidateSkillResponsitory candidateSkillResponsitory) {
         this.candidateRepository = candidateRepository;
+        this.candidateSkillResponsitory = candidateSkillResponsitory;
     }
 
     @Override
@@ -37,7 +41,7 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
-    public Candidate updateCandidate(Candidate candidate) {
+    public Candidate updateCandidate(Long id, Candidate candidate) {
         if (candidate.getId() == null) {
             throw new IllegalArgumentException("Candidate ID cannot be null");
         }
@@ -87,5 +91,14 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public Page<Candidate> getAllCandidates(Pageable pageable) {
         return candidateRepository.findAll(pageable);
+    }
+    @Override
+    public Optional<Candidate> findByEmail(String email) {
+        return candidateRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<CandidateSkill> getSkillsByCandidateId(Long canId) {
+        return candidateSkillResponsitory.findSkillsByCandidateId(canId);
     }
 }

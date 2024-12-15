@@ -56,7 +56,7 @@
                 <td class="border border-gray-300 px-4 py-2" th:text="${candidate.dob}">1990-01-01</td>
                 <td class="border border-gray-300 px-4 py-2" th:text="${candidate.address.street} + ', ' + ${candidate.address.city} + ', ' + ${candidate.address.country}">Địa Chỉ</td>
                 <td class="border border-gray-300 px-4 py-2 text-center">
-                    <a th:href="@{/candidates/edit/{id}(id=${candidate.id})}" class="text-yellow-500 hover:text-yellow-700 mr-2">
+                    <a th:href="@{/candidates/update/{id}(id=${candidate.id})}" class="text-yellow-500 hover:text-yellow-700 mr-2">
                         <i class="fa fa-edit"></i> Sửa
                     </a>
                     <a th:href="@{/candidates/delete/{id}(id=${candidate.id})}" class="text-red-500 hover:text-red-700" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
