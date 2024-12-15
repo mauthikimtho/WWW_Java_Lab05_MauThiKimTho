@@ -49,7 +49,7 @@ public class CandidateContronller {
         model.addAttribute("candidatePage", candidatePage); // Truyền dữ liệu vào model
         model.addAttribute("currentPage", page);
         model.addAttribute("pageSize", size);
-        return "candidate-paging"; // Trả về tên view
+        return "candidates/candidate-paging"; // Trả về tên view
     }
 
 
@@ -57,15 +57,15 @@ public class CandidateContronller {
     @GetMapping("/list")
     public String listCandidates(Model model) {
         List<Candidate> candidates = candidateService.getAllCandidates();
-        model.addAttribute("candidate", candidates);
-        return "candidate";
+        model.addAttribute("candidates", candidates);
+        return "candidates/candidate";
     }
 
     // Hiển thị form thêm ứng viên mới
     @GetMapping("/add")
     public String showAddCandidateForm(Model model) {
         model.addAttribute("candidateForm", new CandidateForm());
-        return "candidate/add-candidate";
+        return "candidates/add-candidate";
     }
 
     @PostMapping("/add")
@@ -98,7 +98,7 @@ public class CandidateContronller {
         }
 
         redirectAttributes.addFlashAttribute("errorMessage", "Thêm ứng viên thất bại!");
-        return "redirect:/candidate/add";
+        return "redirect:/candidates/add";
     }
 
 }

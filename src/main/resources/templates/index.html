@@ -60,6 +60,37 @@
         .menu-item:hover {
             background-color: #8b5d4d;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+        }
+        .close {
+            font-size: 24px;
+            color: #000;
+            float: right;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -67,11 +98,7 @@
     <div class="profile">
         <img src="https://cdn-thumbs.imagevenue.com/02/39/a0/ME19FYC6_t.png" alt="Profile" />
     </div>
-<!--    <button class="menu-item">-->
-<!--        <img src="https://cdn-thumbs.imagevenue.com/fc/75/27/ME19FYCC_t.png" alt="Candidate" />-->
-<!--        Ứng viên-->
-<!--    </button>-->
-    <button class="menu-item" onclick="window.location.href='candidates/candidate.html'">
+    <button class="menu-item" onclick="toggleModal()">
         <img src="https://cdn-thumbs.imagevenue.com/fc/75/27/ME19FYCC_t.png" alt="Candidate" />
         Ứng viên
     </button>
@@ -96,5 +123,34 @@
         Báo cáo
     </button>
 </div>
+
+<!-- Modal -->
+<div id="candidateModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="toggleModal()">&times;</span>
+        <h2>Chọn hành động</h2>
+        <button class="menu-item" onclick="window.location.href='candidates/list-paged'">
+            Hiển thị danh sách ứng viên phân trang
+        </button>
+        <button class="menu-item" onclick="window.location.href='candidates/list'">
+            Hiển thị danh sách ứng viên không phân trang
+        </button>
+    </div>
+</div>
+
+<script>
+    function toggleModal() {
+        const modal = document.getElementById('candidateModal');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Đóng modal khi nhấn ra ngoài
+    window.onclick = function(event) {
+        const modal = document.getElementById('candidateModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
 </body>
 </html>
