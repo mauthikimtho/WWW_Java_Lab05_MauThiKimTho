@@ -225,7 +225,7 @@
         <img src="https://cdn-thumbs.imagevenue.com/b5/2d/3b/ME19FYC5_t.png" alt="Job" />
         Job
     </button>
-    <button class="menu-item">
+    <button class="menu-item" onclick="toggleSkillModal()">
         <img src="https://cdn-thumbs.imagevenue.com/35/18/ad/ME19FYC9_t.png" alt="Skill" />
         Skill
     </button>
@@ -312,6 +312,14 @@
             <p class="text-muted">Đã có tài khoản? <a href="#" onclick="showLoginForm()" class="text-primary">Đăng nhập ngay</a></p>
         </div>
     </div>
+
+    <!-- Modal cho Skills -->
+    <div id="skillModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleSkillModal()">&times;</span>
+            <div id="skillList"></div>
+        </div>
+    </div>
 </div>
 
 
@@ -387,6 +395,61 @@
         }
         if (event.target === document.getElementById('registerFormModal')) {
             document.getElementById('registerFormModal').style.display = 'none';
+        }
+    });
+
+    // Hàm toggle modal cho Skill
+    function toggleSkillModal() {
+        const modal = document.getElementById('skillModal');
+        modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        loadSkills(); // Tải lại danh sách kỹ năng khi mở modal
+    }
+
+    // Hàm thêm kỹ năng (Giả sử kỹ năng là "New Skill")
+    function addSkill() {
+        const skillList = document.getElementById('skillList');
+        const newSkill = document.createElement('div');
+        newSkill.classList.add('skill-item');
+        newSkill.innerHTML = `
+            <span>New Skill</span>
+            <button onclick="deleteSkill(this)">Xóa</button>
+        `;
+        skillList.appendChild(newSkill);
+    }
+
+    // Hàm xóa kỹ năng
+    function deleteSkill(button) {
+        const skillItem = button.parentElement;
+        skillItem.remove();
+    }
+
+    // Hàm tải danh sách kỹ năng (Dữ liệu mẫu, bạn có thể thay thế bằng dữ liệu từ server)
+    function loadSkills() {
+        const skills = [
+            { name: "JavaScript" },
+            { name: "Java" },
+            { name: "Python" }
+        ];
+
+        const skillList = document.getElementById('skillList');
+        skillList.innerHTML = ""; // Xóa danh sách hiện tại
+
+        skills.forEach(skill => {
+            const skillItem = document.createElement('div');
+            skillItem.classList.add('skill-item');
+            skillItem.innerHTML = `
+                <span>${skill.name}</span>
+                <button onclick="deleteSkill(this)">Xóa</button>
+            `;
+            skillList.appendChild(skillItem);
+        });
+    }
+
+    // Đóng modal khi click ra ngoài
+    window.addEventListener('click', function(event) {
+        const skillModal = document.getElementById('skillModal');
+        if (event.target === skillModal) {
+            skillModal.style.display = 'none';
         }
     });
 </script>

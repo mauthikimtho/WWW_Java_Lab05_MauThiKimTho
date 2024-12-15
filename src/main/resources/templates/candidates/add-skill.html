@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Kỹ Năng Cho Ứng Viên</title>
+</head>
+<body>
+<h2>Thêm Kỹ Năng Cho Ứng Viên</h2>
+<form action="/candidates/{id}/skills/add" method="post">
+    <div>
+        <label for="candidateId">Chọn ứng viên:</label>
+        <select name="candidateId" id="candidateId" required>
+            <option value="">-- Chọn ứng viên --</option>
+            <th:block th:each="candidate : ${candidates}">
+                <option th:value="${candidate.id}" th:text="${candidate.fullName}"></option>
+            </th:block>
+        </select>
+    </div>
+
+    <div>
+        <label for="skillId">Chọn kỹ năng:</label>
+        <select name="skillId" id="skillId" required>
+            <option value="">-- Chọn kỹ năng --</option>
+            <th:block th:each="skill : ${availableSkills}">
+                <option th:value="${skill.id}" th:text="${skill.skillName}"></option>
+            </th:block>
+        </select>
+    </div>
+
+    <div>
+        <label for="skillLevel">Mức độ kỹ năng:</label>
+        <input type="number" name="skillLevel" id="skillLevel" min="1" max="5" required>
+    </div>
+
+    <div>
+        <label for="moreInfos">Thông tin thêm:</label>
+        <textarea name="moreInfos" id="moreInfos" rows="4" cols="50"></textarea>
+    </div>
+
+    <div>
+        <button type="submit">Thêm Kỹ Năng</button>
+    </div>
+
+    <div th:if="${successMessage != null}">
+        <p th:text="${successMessage}" style="color: green;"></p>
+    </div>
+
+    <div th:if="${errorMessage != null}">
+        <p th:text="${errorMessage}" style="color: red;"></p>
+    </div>
+</form>
+</body>
+</html>

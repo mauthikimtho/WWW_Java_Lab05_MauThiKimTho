@@ -1,7 +1,6 @@
 package www_lab5_mauthikimtho.frontend.controllers;
 
 
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +14,8 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import www_lab5_mauthikimtho.backend.enums.CountryCode;
 import www_lab5_mauthikimtho.backend.models.dto.CandidateForm;
-import www_lab5_mauthikimtho.backend.models.entities.Address;
-import www_lab5_mauthikimtho.backend.models.entities.Candidate;
-import www_lab5_mauthikimtho.backend.models.entities.CandidateSkill;
+import www_lab5_mauthikimtho.backend.models.dto.CandidateSkillForm;
+import www_lab5_mauthikimtho.backend.models.entities.*;
 import www_lab5_mauthikimtho.backend.reponsitories.CandidateSkillResponsitory;
 import www_lab5_mauthikimtho.backend.reponsitories.SkillReponsitory;
 import www_lab5_mauthikimtho.backend.services.AddressService;
@@ -25,6 +23,8 @@ import www_lab5_mauthikimtho.backend.services.CandidateService;
 import www_lab5_mauthikimtho.backend.services.JobService;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -74,7 +74,7 @@ public class CandidateContronller {
 
     @PostMapping("/add")
     public String addCandidate(@ModelAttribute("candidateForm") CandidateForm candidateForm, RedirectAttributes redirectAttributes) {
-        try{
+        try {
             // Tạo Address mới
             Address address = new Address();
             address.setStreet(candidateForm.getStreet());
@@ -97,7 +97,7 @@ public class CandidateContronller {
 
             redirectAttributes.addFlashAttribute("successMessage", "Thêm ứng viên thành công!");
             return "redirect:/candidate/list";
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -284,4 +284,154 @@ public class CandidateContronller {
         return "candidates/profile";  // Trả về trang profile.html
     }
 
+
+
+    @GetMapping("/{id}/skills/add")
+    public String showAddSkillForm(@PathVariable("id") Long candidateId, Model model, RedirectAttributes redirectAttributes) {
+        Optional<Candidate> candidateOpt = candidateService.getCandidateById(candidateId);
+        if (candidateOpt.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Ứng viên không tồn tại.");
+            return "redirect:/candidates/login";
+        }
+
+        Candidate candidate = candidateOpt.get();
+
+        // Lấy tất cả các kỹ năng
+        List<Skill> allSkills = skillRepository.findAll();
+
+        // Lấy các kỹ năng mà ứng viên đã có
+        List<CandidateSkill> candidateSkills = candidateSkillRepository.findSkillsByCandidateId(candidateId);
+        List<Long> existingSkillIds = candidateSkills.stream()
+                .map(cs -> cs.getSkill().getId())
+                .collect(Collectors.toList());
+
+        // Lọc ra các kỹ năng chưa được thêm cho ứng viên
+        List<Skill> availableSkills = allSkills.stream()
+                .filter(skill -> !existingSkillIds.contains(skill.getId()))
+                .collect(Collectors.toList());
+
+        // Tạo đối tượng form
+        CandidateSkillForm candidateSkillForm = new CandidateSkillForm();
+
+        model.addAttribute("candidate", candidate);
+        model.addAttribute("availableSkills", availableSkills);
+        model.addAttribute("candidateSkillForm", candidateSkillForm);
+
+        return "candidates/addSkill"; // Tạo file addSkill.html
+    }
+
+    @PostMapping("/{id}/skills/add")
+    public String addSkillToCandidate(@PathVariable("id") Long candidateId,
+                                      @ModelAttribute("candidateSkillForm") CandidateSkillForm form,
+                                      RedirectAttributes redirectAttributes) {
+        try {
+            Candidate candidate = candidateService.getCandidateById(candidateId)
+                    .orElseThrow(() -> new ResourceAccessException("Ứng viên không tồn tại với id: " + candidateId));
+
+            Skill skill = skillRepository.findById(form.getSkillId())
+                    .orElseThrow(() -> new ResourceAccessException("Kỹ năng không tồn tại với id: " + form.getSkillId()));
+
+            // Kiểm tra xem ứng viên đã có kỹ năng này chưa
+            List<CandidateSkill> existingSkills = candidateService.getSkillsByCandidateId(candidateId);
+            boolean alreadyHasSkill = existingSkills.stream()
+                    .anyMatch(cs -> cs.getSkill().getId().equals(skill.getId()));
+            if (alreadyHasSkill) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Ứng viên đã có kỹ năng này.");
+                return "redirect:/candidates/" + candidateId + "/profile";
+            }
+
+            // Tạo mới CandidateSkill
+            CandidateSkill newCandidateSkill = new CandidateSkill();
+            CandidateSkillId candidateSkillId = new CandidateSkillId();
+            candidateSkillId.setCanId(candidateId);
+            candidateSkillId.setSkillId(skill.getId());
+            newCandidateSkill.setId(candidateSkillId);  // Đảm bảo ánh xạ khóa chính phức hợp đúng
+
+            // Thiết lập các thuộc tính còn lại
+            newCandidateSkill.setSkill(skill);
+            newCandidateSkill.setSkillLevel((byte) form.getSkillLevel());
+            newCandidateSkill.setMoreInfos(form.getMoreInfos());
+
+            candidateSkillRepository.save(newCandidateSkill);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm kỹ năng thành công.");
+            return "redirect:/candidates/" + candidateId + "/profile";
+        } catch (ResourceAccessException e) {
+            logger.error("ResourceNotFoundException: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/candidates/login";
+        } catch (Exception e) {
+            logger.error("Exception during adding skill", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Thêm kỹ năng thất bại!");
+            return "redirect:/candidates/" + candidateId + "/profile";
+        }
+    }
+
+    @PostMapping("/{id}/skills/{skillId}/delete")
+    public String deleteSkillFromCandidate(@PathVariable("id") Long candidateId,
+                                           @PathVariable("skillId") Long skillId,
+                                           RedirectAttributes redirectAttributes) {
+        try {
+            CandidateSkillId candidateSkillId = new CandidateSkillId();
+            candidateSkillId.setCanId(candidateId);
+            candidateSkillId.setSkillId(skillId);
+
+            CandidateSkill candidateSkill = candidateSkillRepository.findById(candidateSkillId)
+                    .orElseThrow(() -> new ResourceAccessException("Kỹ năng không tồn tại cho ứng viên id: " + candidateId + " và skill id: " + skillId));
+
+            candidateSkillRepository.delete(candidateSkill);
+
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa kỹ năng thành công.");
+            return "redirect:/candidates/" + candidateId + "/profile";
+        } catch (ResourceAccessException e) {
+            logger.error("ResourceNotFoundException: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/candidates/login";
+        } catch (Exception e) {
+            logger.error("Exception during deleting skill", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Xóa kỹ năng thất bại!");
+            return "redirect:/candidates/login";
+        }
+    }
+
+    @GetMapping("/{id}/profile")
+    public String showProfile(@PathVariable("id") Long candidateId, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            Candidate candidate = candidateService.getCandidateById(candidateId)
+                    .orElseThrow(() -> new ResourceAccessException("Ứng viên không tồn tại với id: " + candidateId));
+
+            List<CandidateSkill> candidateSkills = candidateService.getSkillsByCandidateId(candidateId);
+
+            // Ghi log thông tin candidate
+            logger.info("Candidate: {}", candidate);
+
+            // Ghi log thông tin skills
+            if (candidateSkills != null && !candidateSkills.isEmpty()) {
+                logger.info("Skills Count: {}", candidateSkills.size());
+                for (CandidateSkill cs : candidateSkills) {
+                    if (cs.getSkill() != null) {
+                        logger.info("CandidateSkill ID: {}, Skill Name: {}", cs.getId(), cs.getSkill().getSkillName());
+                    } else {
+                        logger.warn("CandidateSkill ID: {} has null Skill", cs.getId());
+                    }
+                }
+            } else {
+                logger.warn("Skills list is null or empty for candidate ID: {}", candidateId);
+            }
+
+            model.addAttribute("candidate", candidate);
+            model.addAttribute("candidateSkills", candidateSkills);
+
+            return "candidates/profile"; // Trang hiển thị thông tin ứng viên
+        } catch (ResourceAccessException e) {
+            logger.error("ResourceNotFoundException: {}", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/candidates/login";
+        } catch (Exception e) {
+            logger.error("Exception during showing profile", e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Hiển thị hồ sơ thất bại!");
+            return "redirect:/candidates/login";
+        }
+    }
+    
 }

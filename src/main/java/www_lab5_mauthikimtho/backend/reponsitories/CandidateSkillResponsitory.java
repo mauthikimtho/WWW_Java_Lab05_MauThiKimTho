@@ -32,4 +32,7 @@ public interface CandidateSkillResponsitory extends JpaRepository<CandidateSkill
                   @Param("skillId") Long skillId,
                   @Param("skillLevel") int skillLevel,
                   @Param("moreInfos") String moreInfos);
+    public interface CandidateSkillRepository extends JpaRepository<CandidateSkill, Long> {
+
+    }
 }
