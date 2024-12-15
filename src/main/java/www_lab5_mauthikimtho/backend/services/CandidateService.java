@@ -23,4 +23,6 @@ public interface CandidateService {
     Optional<Candidate> findByEmail(String email);
 
     List<CandidateSkill> getSkillsByCandidateId(Long canId);
+    Candidate findById(Long id);
+    List<CandidateSkill> getSkills(Long candidateId);
 }

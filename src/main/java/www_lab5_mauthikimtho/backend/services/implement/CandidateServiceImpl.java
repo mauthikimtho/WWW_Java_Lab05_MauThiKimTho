@@ -101,4 +101,11 @@ public class CandidateServiceImpl implements CandidateService {
     public List<CandidateSkill> getSkillsByCandidateId(Long canId) {
         return candidateSkillResponsitory.findSkillsByCandidateId(canId);
     }
+    public Candidate findById(Long id) {
+        return candidateRepository.findById(id).orElse(null);
+    }
+
+    public List<CandidateSkill> getSkills(Long candidateId) {
+        return candidateSkillResponsitory.findSkillsByCandidateId(candidateId);
+    }
 }

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông Tin Ứng Viên</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        .profile-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .profile-body {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .profile-section {
+            margin-bottom: 20px;
+        }
+
+        .profile-section .title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .profile-section .value {
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .btn-custom {
+            border-radius: 20px;
+            padding: 10px 20px;
+        }
+
+        .profile-actions {
+            margin-top: 20px;
+        }
+
+        .btn-edit, .btn-logout {
+            margin-right: 10px;
+        }
+
+        .alert-dismissible {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Thông Tin Ứng Viên</h1>
+
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div class="card shadow">
+        <div class="profile-header text-center">
+            <h2 th:text="${candidate.fullName}">Tên Ứng Viên</h2>
+            <p class="mb-0" th:text="${candidate.email}">email@example.com</p>
+        </div>
+
+        <div class="profile-body">
+            <div class="profile-section row">
+                <div class="col-md-3 title">Số Điện Thoại:</div>
+                <div class="col-md-9 value" th:text="${candidate.phone}">0123456789</div>
+            </div>
+            <div class="profile-section row">
+                <div class="col-md-3 title">Ngày Sinh:</div>
+                <div class="col-md-9 value" th:text="${candidate.dob}">1990-01-01</div>
+            </div>
+            <div class="profile-section row">
+                <div class="col-md-3 title">Địa Chỉ:</div>
+                <div class="col-md-9 value" th:text="${candidate.address.street} + ', ' + ${candidate.address.city} + ', ' + ${candidate.address.country} + ', ' + ${candidate.address.zipcode}">
+                    Địa Chỉ
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h5 class="text-muted">Kỹ Năng</h5>
+                <ul class="list-group" th:if="${candidateSkills != null and !#lists.isEmpty(candidateSkills)}">
+                    <li class="list-group-item d-flex justify-content-between align-items-center" th:each="candidateSkill : ${candidateSkills}">
+                        <span th:text="${candidateSkill.skill.skillName}">Tên Kỹ Năng</span>
+                        <form th:action="@{'/candidates/' + ${candidate.id} + '/skills/' + ${candidateSkill.skill.id} + '/delete'}" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa kỹ năng này?');">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="bi bi-trash"></i> Xóa
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+                <div th:if="${candidateSkills == null or #lists.isEmpty(candidateSkills)}" class="text-muted">
+                    Ứng viên này chưa có kỹ năng nào.
+                </div>
+            </div>
+
+            <div class="profile-actions text-center">
+                <a th:href="@{'/candidates/' + ${candidate.id} + '/skills/add'}" class="btn btn-custom btn-success me-2">
+                    <i class="bi bi-plus-circle"></i> Thêm Kỹ Năng
+                </a>
+                <a th:href="@{'/candidates/' + ${candidate.id} + '/job-suggestions'}" class="btn btn-custom btn-info me-2">
+                    <i class="bi bi-lightbulb"></i> Gợi Ý Công Việc
+                </a>
+                <a th:href="@{'/candidates/edit/' + ${candidate.id}}" class="btn btn-custom btn-warning me-2">
+                    <i class="bi bi-pencil-square"></i> Sửa Hồ Sơ
+                </a>
+                <a th:href="@{/candidates/logout}" class="btn btn-custom btn-danger">
+                    <i class="bi bi-box-arrow-right"></i> Đăng Xuất
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,6 +1,7 @@
 package www_lab5_mauthikimtho.frontend.controllers;
 
 
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -228,6 +229,59 @@ public class CandidateContronller {
     }
 
 
-
+    // Xử lý xem hồ sơ ứng viên
+//    @GetMapping("/profile")
+//    public String viewCandidateProfile(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+//        try {
+//            Candidate candidate = candidateService.getCandidateById(id)
+//                    .orElseThrow(() -> new ResourceAccessException("Ứng viên không tồn tại với ID: " + id));
+//
+//            // Lấy danh sách kỹ năng của ứng viên (nếu cần)
+//            List<CandidateSkill> candidateSkills = candidateSkillRepository.findSkillsByCandidateId(candidate.getId());
+//
+//            // Ghi thông tin ứng viên vào log
+//            logger.info("Candidate Profile: {}", candidate);
+//
+//            // Ghi thông tin kỹ năng vào log (nếu có)
+//            if (candidateSkills != null && !candidateSkills.isEmpty()) {
+//                logger.info("Skills Count for Candidate ID {}: {}", candidate.getId(), candidateSkills.size());
+//            } else {
+//                logger.warn("No skills found for Candidate ID: {}", candidate.getId());
+//            }
+//
+//            // Truyền dữ liệu ứng viên và kỹ năng vào model để hiển thị trong view
+//            model.addAttribute("candidate", candidate);
+//            model.addAttribute("candidateSkills", candidateSkills);
+//
+//            return "candidates/profile";
+//        } catch (ResourceAccessException e) {
+//            logger.error("Error: {}", e.getMessage());
+//            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+//            return "redirect:/candidates/list"; // Quay về danh sách ứng viên nếu lỗi
+//        } catch (Exception e) {
+//            logger.error("Exception occurred while fetching profile", e);
+//            redirectAttributes.addFlashAttribute("errorMessage", "Đã xảy ra lỗi khi xem hồ sơ!");
+//            return "redirect:/candidates/list"; // Quay về danh sách ứng viên nếu lỗi
+//        }
+//    }
+//    @GetMapping("/profile")
+//    public String showProfile(HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+//        Candidate candidate = (Candidate) session.getAttribute("loggedInCandidate");
+//        model.addAttribute("candidate", candidate);
+//        return "candidates/profile";
+//    }
+    @GetMapping("/profile/{id}")
+    public String viewProfile(@PathVariable("id") Long id, Model model) {
+        Candidate candidate = candidateService.findById(id);
+        if (candidate != null) {
+            model.addAttribute("candidate", candidate);
+            // Giả sử bạn có một dịch vụ để lấy kỹ năng của ứng viên
+            List<CandidateSkill> candidateSkills = candidateService.getSkills(id);
+            model.addAttribute("candidateSkills", candidateSkills);
+        } else {
+            model.addAttribute("errorMessage", "Ứng viên không tồn tại.");
+        }
+        return "candidates/profile";  // Trả về trang profile.html
+    }
 
 }
