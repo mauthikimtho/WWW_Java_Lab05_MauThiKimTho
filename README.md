@@ -1,6 +1,10 @@
 # WWW_Java_Lab05_MauThiKimTho
 TRANG WEB TUYỂN DỤNG VIỆC LÀM
-Đây là một ứng dụng web dùng để quản lý công việc và ứng viên, được xây dựng bằng Spring Boot. Hệ thống cho phép các công ty đăng tin tuyển dụng, và ứng viên có thể ứng tuyển dựa trên kỹ năng và sở thích của mình. Ứng dụng cũng cung cấp tính năng gợi ý công việc phù hợp với ứng viên và cho phép các công ty mời ứng viên qua email.
+
+Đây là một ứng dụng web dùng để quản lý công việc và ứng viên, được xây dựng bằng Spring Boot. 
+Hệ thống cho phép các công ty đăng tin tuyển dụng, và ứng viên có thể ứng tuyển dựa trên kỹ năng và sở thích của mình. 
+Ứng dụng cũng cung cấp tính năng gợi ý công việc phù hợp với ứng viên và cho phép các công ty mời ứng viên qua email.
+
 CÁC TÍNH NĂNG:
 Chức năng Quản lý Ứng viên (Candidate) 
 •	Thêm ứng viên mới: Hiển thị form để nhập thông tin ứng viên và lưu vào cơ sở dữ liệu. 
